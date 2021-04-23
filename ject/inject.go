@@ -125,6 +125,7 @@ func (c *Inject) NewEntry(ctx context.Context, r *http.Request, cause string) *E
 
 	return &Entry{
 		Ctx:            ctx,
+		Cause:          cause,
 		CauseTime:      c.TimeFormatter(time.Now()),
 		RequestID:      c.GetRequestID(r),
 		RequestContent: c.PurgeRequest(c.GetRequestContent(r)),
