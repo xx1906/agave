@@ -63,18 +63,21 @@ func SetThrowPanic(tp bool) InjectOption {
 	}
 }
 
+// 设置用户信息敏感内容处理函数
 func SetPurgeRequest(f func(string) string) InjectOption {
 	return func(c *Inject) {
 		c.PurgeRequest = f
 	}
 }
 
+// 获取请求追踪的 id
 func SetGetRequestId(f func(r *http.Request) string) InjectOption {
 	return func(c *Inject) {
 		c.GetRequestID = f
 	}
 }
 
+// 获取请求内容
 func SetGetRequestContent(f func(r *http.Request) string) InjectOption {
 	return func(c *Inject) {
 		c.GetRequestContent = f
@@ -87,6 +90,7 @@ func (c *Inject) AddHook(h Hook) {
 	c.Hooks = append(c.Hooks, h)
 }
 
+// 构造 Inject 函数, opt 是可选的构造项
 func NewInject(opt ...InjectOption) *Inject {
 	cj := Inject{}
 	hostname, _ := os.Hostname()
@@ -145,10 +149,12 @@ var (
 	_ = SetGetRequestContent
 )
 
+// 默认不过滤用户敏感信息
 func defaultPurgeRequest(s string) string {
 	return s
 }
 
+// 获取请求 id
 func defaultGetRequestId(r *http.Request) string {
 	if r == nil {
 		return ""
@@ -156,11 +162,13 @@ func defaultGetRequestId(r *http.Request) string {
 	return r.Header.Get(requestID)
 }
 
+// 格式化时间
 func defaultTimeFormatter(t time.Time) string {
-	timeString := t.Format("2006-01-02 - 15:04:05")
+	timeString := t.Format("2006-01-02 15:04:05")
 	return timeString
 }
 
+// 获取请求内容
 func defaultGetRequestContent(r *http.Request) string {
 	data, _ := httputil.DumpRequest(r, true)
 	return string(data)
