@@ -3,6 +3,7 @@ package box
 import (
 	"bytes"
 	"context"
+	"os"
 
 	"fmt"
 	"github.com/guzzsek/agave/encoding/json"
@@ -17,6 +18,7 @@ type wechatMarkdownWebHook struct {
 	Msgtype string `json:"msgtype"`
 }
 
+// 需要参照微信机器人的通知配置
 func (c wechatMarkdownWebHook) Send(ctx context.Context, entry *ject.Entry) error {
 	// 微信 markdown 通知类型
 	type WxMarkdownContent struct {
@@ -24,23 +26,32 @@ func (c wechatMarkdownWebHook) Send(ctx context.Context, entry *ject.Entry) erro
 		Markdown map[string]interface{} `json:"markdown"`
 	}
 
-	data, err := json.Marshal(entry)
-	if err != nil {
+	var (
+		request *http.Request  // 请求体
+		resp    *http.Response // 响应体
+
+		err  error
+		data []byte
+
+		v WxMarkdownContent
+	)
+
+	if data, err = json.Marshal(entry); err != nil {
 		return err
 	}
 
-	v := WxMarkdownContent{Msgtype: "markdown", Markdown: make(map[string]interface{})}
+	v = WxMarkdownContent{Msgtype: "markdown", Markdown: make(map[string]interface{})}
 	v.Markdown["content"] = fmt.Sprintf(`%s`, string(data))
 
 	data, err = json.Marshal(v)
 	buffer := bytes.NewBuffer(data)
 
-	request, err := http.NewRequestWithContext(ctx, http.MethodPost, c.WebHook, buffer)
-	if err != nil {
+	// 构造请求体
+	if request, err = http.NewRequestWithContext(ctx, http.MethodPost, c.WebHook, buffer); err != nil {
 		return err
 	}
-	resp, err := http.DefaultClient.Do(request)
-	if err != nil {
+
+	if resp, err = http.DefaultClient.Do(request); err != nil {
 		return err
 	}
 
@@ -49,7 +60,7 @@ func (c wechatMarkdownWebHook) Send(ctx context.Context, entry *ject.Entry) erro
 		return err
 	}
 
-	fmt.Println(string(data))
+	fmt.Fprintln(os.Stdout, string(data))
 	return nil
 }
 
