@@ -232,7 +232,7 @@ type Hook interface {
 1. 大体上描述了go 程序崩溃, 以及拦截 panic 的方式
 2. 介绍了 go 程序崩溃的场景
 3. 描述了 gin 回调的过程
-4. 快速复现以及定位一个程序panic 最有效的方式(什么场景下，哪些数据，会引起程序的哪部分panic)
+4. 快速复现以及定位一个程序panic 最有效的方式(什么时候，哪些数据，在哪台机器，哪个程序，哪个版本的操作系统，cpu 架构，go 版本，会引起程序的哪部分panic)
 5. 构造一个通知场景多变的 gin Recovery Handler 需要怎么设计
 
 具体的实现需要参考 [github](https://github.com/guzzsek/agave/tree/master/ject)
