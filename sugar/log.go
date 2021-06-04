@@ -2,11 +2,14 @@ package sugar
 
 import (
 	"context"
+	"fmt"
 	"github.com/natefinch/lumberjack"
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -53,7 +56,7 @@ func NewSugar(logPath, errPath string, logLevel zapcore.Level) *Sugar {
 	)
 	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 
-	return &Sugar{sugar: logger.Sugar()}
+	return &Sugar{logger: logger}
 }
 
 func getWriter(filename string) io.Writer {
@@ -67,30 +70,39 @@ func getWriter(filename string) io.Writer {
 }
 
 type Sugar struct {
-	sugar *zap.SugaredLogger
+	logger *zap.Logger
 }
 
 type entry struct {
-	zap.Field
+	field []zap.Field
 	sugar *Sugar
 }
 
+
 func (s *Sugar) WitchContext(ctx context.Context) *entry {
 
-	return &entry{Field: zap.String("trace", "x"), sugar: s}
+	field := make([]zap.Field, 0)
+	field = append(field, zap.String("trace_id", getTraceId(ctx)))
+
+	return &entry{field: field, sugar: s}
 }
+
 func (s *entry) Info(args ...interface{}) {
-	s.sugar.sugar.Info(args...)
+	s.sugar.logger.With(s.field...).Sugar().Info(args...)
 }
+
 func (s *entry) Infof(template string, args ...interface{}) {
-	s.sugar.infof(template, args...)
+
+	s.sugar.logger.With(s.field...).Sugar().Infof(template, args...)
 }
 
-func (s *Sugar) infof(template string, args ...interface{}) {
-	s.sugar.Infof(template, args...)
-}
-
-func init() {
-	sugar := NewSugar("", "", 3)
-	sugar.WitchContext(context.TODO()).Info("hello", "world")
+func getTraceId(ctx context.Context) string {
+	span := opentracing.SpanFromContext(ctx)
+	var traceID string
+	if span == nil {
+		traceID = ""
+	} else {
+		traceID = strings.SplitN(fmt.Sprintf("%s", span.Context()), ":", 2)[0]
+	}
+	return traceID
 }
