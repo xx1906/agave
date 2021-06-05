@@ -7,14 +7,13 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/guzzsek/agave/pencil/config"
 	"github.com/natefinch/lumberjack"
-	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/cast"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 )
@@ -222,12 +221,9 @@ func getWriter(filename string, maxBackup, maxAge, maxSize int, compress bool) i
 
 // get trace id
 func getTraceId(ctx context.Context) string {
-	span := opentracing.SpanFromContext(ctx)
 	var traceID string
-	if span == nil {
-		traceID = ""
-	} else {
-		traceID = strings.SplitN(fmt.Sprintf("%s", span.Context()), ":", 2)[0]
+	if tid := trace.SpanContextFromContext(ctx).TraceID(); tid.IsValid() {
+		traceID = tid.String()
 	}
 	return traceID
 }
