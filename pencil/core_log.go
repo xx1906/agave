@@ -144,8 +144,23 @@ func (c *Core) CoreLogger(ctx context.Context) log.Logger {
 	}
 }
 
-// *Helper
-func (c *Core) WithContext(ctx context.Context) *log.Helper {
+
+func (c *Core) WithContext(ctx context.Context) *EntryMiddle {
+
+	return &EntryMiddle{
+		ctx:    ctx,
+		pool:   c.pool,
+		logger: c.logger,
+	}
+}
+
+type EntryMiddle struct {
+	ctx    context.Context
+	pool   *sync.Pool
+	logger *zap.Logger
+}
+
+func (c *EntryMiddle) WithContext(ctx context.Context) *log.Helper {
 	traceId := getTraceId(ctx)
 	logger := c.logger.With(zap.String("trace_id", traceId))
 
