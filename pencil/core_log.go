@@ -63,7 +63,7 @@ func NewCore(cfg *config.Config) (c *Core) {
 		StacktraceKey: "stack",
 
 		EncodeTime: func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-			enc.AppendString(t.Format("2006-01-02 15:04:05:06"))
+			enc.AppendString(t.Format("2006-01-02 15:04:05.9999999"))
 		}, //输出的时间格式
 		EncodeDuration: func(d time.Duration, enc zapcore.PrimitiveArrayEncoder) {
 			enc.AppendInt64(int64(d) / 10e6)
