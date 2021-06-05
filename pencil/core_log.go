@@ -86,7 +86,7 @@ func NewCore(cfg *config.Config) (c *Core) {
 
 	// error level log
 	errorLevel := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl >= zapcore.ErrorLevel && lvl >= logLevel
+		return lvl == zapcore.ErrorLevel && lvl >= logLevel
 	})
 
 	// 保留文件的最大数量
