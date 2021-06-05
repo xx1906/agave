@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package config;
+
+option go_package = "pencil/config;config";
+
+// 日志配置
+message Config {
+
+  string level = 1; // 日志等级
+  string path = 2;  // 日志文件的路径
+
+  optional uint32 max_size = 3;   // 文件容量的最大值，单位是 mb
+  optional uint32 max_backup = 4; // 最大文件的保留数量
+  optional uint32 max_age = 5;    // 保存的最大天数
+  optional bool compress = 6;    // 是否压缩日志
+}
