@@ -12,5 +12,5 @@ func BenchmarkXLog(b *testing.B) {
 }
 
 func TestXLogMinute(t *testing.T) {
-	XLogMinute(time.Minute * 3)()
+	XLogMinute(time.Minute / 3)()
 }

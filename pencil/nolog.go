@@ -8,8 +8,7 @@ import (
 )
 
 func XLog() func() {
-	var rootCore = NewCore(&config.Config{Path: "logs"})
-	var newLog = rootCore.WithContext(context.TODO())
+	var newLog = NewCore(&config.Config{Path: "logs"}).MiddleEntry()
 	return func() {
 		newLog.WithContext(context.Background()).Infof("time:%s, greeter:%v", time.Now().String(), "jacy")
 		newLog.WithContext(context.Background()).Warn("warn", "hello world")
@@ -19,9 +18,8 @@ func XLog() func() {
 
 func XLogMinute(m time.Duration) func() {
 	var maxSize = uint32(32)
+	var newLog = NewCore(&config.Config{Path: "logs", Level: "debug", MaxSize: &maxSize}).MiddleEntry()
 
-	var rootCore = NewCore(&config.Config{Path: "logs", Level: "debug", MaxSize: &maxSize})
-	var newLog = rootCore.WithContext(context.TODO())
 	return func() {
 		ticker := time.NewTicker(m)
 		step := time.NewTicker(m / 100)
