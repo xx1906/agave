@@ -136,6 +136,14 @@ func NewCore(cfg *config.Config) (c *Core) {
 	return c
 }
 
+func (c *Core) CoreLogger() log.Logger {
+	return &entryCore{
+		ctx:    context.TODO(),
+		pool:   c.pool,
+		logger: c.logger,
+	}
+}
+
 // *Helper
 func (c *Core) WithContext(ctx context.Context) *log.Helper {
 	traceId := getTraceId(ctx)
