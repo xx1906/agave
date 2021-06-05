@@ -136,9 +136,9 @@ func NewCore(cfg *config.Config) (c *Core) {
 	return c
 }
 
-func (c *Core) CoreLogger() log.Logger {
+func (c *Core) CoreLogger(ctx context.Context) log.Logger {
 	return &entryCore{
-		ctx:    context.TODO(),
+		ctx:    ctx,
 		pool:   c.pool,
 		logger: c.logger,
 	}
