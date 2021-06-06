@@ -135,6 +135,10 @@ func NewCore(cfg *config.Config) (c *Core) {
 	return c
 }
 
+func (c *Core) Logger() *zap.Logger {
+	return c.logger
+}
+
 func (c *Core) DumpCoreLogger() log.Logger {
 	return &entryCore{
 		ctx:    context.TODO(),
