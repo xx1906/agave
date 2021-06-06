@@ -78,7 +78,6 @@ type entry struct {
 	sugar *Sugar
 }
 
-
 func (s *Sugar) WitchContext(ctx context.Context) *entry {
 
 	field := make([]zap.Field, 0)
