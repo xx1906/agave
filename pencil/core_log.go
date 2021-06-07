@@ -160,13 +160,25 @@ type MiddleEntry struct {
 	logger *zap.Logger
 }
 
-func (c *MiddleEntry) WithContext(ctx context.Context) *log.Helper {
+type Option func(ctx context.Context) zap.Field
+
+// opts 是可变参数
+func (c *MiddleEntry) WithContext(ctx context.Context, opts ...Option) *log.Helper {
+
+	field := make([]zap.Field, 0, len(opts)+1)
+
+	for _, v := range opts {
+		field = append(field, v(ctx))
+	}
+
+	// 默认注入 trace_id
+	field = append(field, zap.String("trace_id", getTraceId(ctx)))
 
 	return log.NewHelper(&entryCore{
 		ctx:    ctx,
 		pool:   c.pool,
 		logger: c.logger,
-		field:  append([]zap.Field{}, zap.String("trace_id", getTraceId(ctx))),
+		field:  field,
 	})
 }
 
