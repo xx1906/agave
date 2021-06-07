@@ -161,13 +161,12 @@ type MiddleEntry struct {
 }
 
 func (c *MiddleEntry) WithContext(ctx context.Context) *log.Helper {
-	traceId := getTraceId(ctx)
-	logger := c.logger.With(zap.String("trace_id", traceId))
 
 	return log.NewHelper(&entryCore{
 		ctx:    ctx,
 		pool:   c.pool,
-		logger: logger,
+		logger: c.logger,
+		field:  append([]zap.Field{}, zap.String("trace_id", getTraceId(ctx))),
 	})
 }
 
@@ -175,6 +174,7 @@ type entryCore struct {
 	ctx    context.Context
 	pool   *sync.Pool
 	logger *zap.Logger
+	field  []zap.Field
 }
 
 func (c *entryCore) Log(level log.Level, keyvals ...interface{}) error {
@@ -194,15 +194,15 @@ func (c *entryCore) Log(level log.Level, keyvals ...interface{}) error {
 
 	switch level {
 	case log.LevelDebug:
-		c.logger.Debug(buf.String())
+		c.logger.Debug(buf.String(), c.field...)
 	case log.LevelInfo:
-		c.logger.Info(buf.String())
+		c.logger.Info(buf.String(), c.field...)
 	case log.LevelWarn:
-		c.logger.Warn(buf.String())
+		c.logger.Warn(buf.String(), c.field...)
 	case log.LevelError:
-		c.logger.Error(buf.String())
+		c.logger.Error(buf.String(), c.field...)
 	default:
-		c.logger.Debug(buf.String())
+		c.logger.Debug(buf.String(), c.field...)
 
 	}
 
