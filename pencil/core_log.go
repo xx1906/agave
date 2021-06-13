@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/guzzsek/agave/pencil/config"
+	"github.com/laxiaohong/agave/pencil/config"
 	"github.com/natefinch/lumberjack"
 	"github.com/spf13/cast"
 	"go.opentelemetry.io/otel/trace"

@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/guzzsek/agave/box"
-	"github.com/guzzsek/agave/ject"
+	"github.com/laxiaohong/agave/box"
+	"github.com/laxiaohong/agave/ject"
 )
 
 func main() {

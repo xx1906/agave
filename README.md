@@ -239,6 +239,6 @@ type Hook interface {
 4. 快速复现以及定位一个程序panic 最有效的方式(什么时候，哪些数据，在哪台机器，哪个程序，哪个版本的操作系统，cpu 架构，go 版本，会引起程序的哪部分panic)
 5. 构造一个通知场景多变的 gin Recovery Handler 需要怎么设计
 
-具体地实现需要参考 [github](https://github.com/guzzsek/agave/tree/master/ject)
+具体地实现需要参考 [github](https://github.com/laxiaohong/tree/master/ject)
 
 谢谢

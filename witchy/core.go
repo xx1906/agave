@@ -36,7 +36,7 @@ const (
 	YellowBold  = "\033[33;1m"
 )
 
-var tracer = otel.Tracer("github.com/guzzsek/gorm_log")
+var tracer = otel.Tracer("github.com/laxiaohong/gorm_log")
 
 func NewPaper(logger *zap.Logger, config gormLogger.Config) gormLogger.Interface {
 	var (
