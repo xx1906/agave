@@ -4,6 +4,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/laxiaohong/agave/pencil/config"
 	"github.com/natefinch/lumberjack"
@@ -11,11 +18,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"io"
-	"os"
-	"path/filepath"
-	"sync"
-	"time"
 )
 
 const (
@@ -121,6 +123,11 @@ func NewCore(cfg *config.Config) (c *Core) {
 		//zapcore.NewCore(zapcore.NewJSONEncoder(config), zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout)), logLevel), //同时将日志输出到控制台，NewJSONEncoder 是结构化输出
 	)
 
+	if cfg.DebugModeOutputConsole != nil && (*cfg.DebugModeOutputConsole && (strings.ToLower(cfg.Level) == "debug" || cfg.Level == "")) {
+		core = zapcore.NewTee(core,
+			zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout)), logLevel), //同时将日志输出到控制台，NewJSONEncoder 是结构化输出
+		)
+	}
 	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(2))
 
 	c = &Core{

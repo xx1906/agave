@@ -1,3 +1,5 @@
 .idea/
 .vscode
-
+/*.DS_Store
+pencil/logs*
+pencil/.DS_Store

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package config;
+package pencil.cfg;
 
 option go_package = "pencil/config;config";
 
@@ -14,4 +14,5 @@ message Config {
   optional uint32 max_backup = 4; // 最大文件的保留数量
   optional uint32 max_age = 5;    // 保存的最大天数
   optional bool compress = 6;    // 是否压缩日志
+  optional bool debug_mode_output_console = 7; // debug 模式下输出到控制台
 }
